@@ -1,5 +1,5 @@
 import numpy as np
-
+import matplotlib.pyplot as plt
 
 
 #matrix size constant
@@ -31,4 +31,31 @@ egVal, egVec = np.linalg.eig(npMatrix)
 
 print("EigenValues:", egVal)
 print("Eigen Vectors:", egVec)
+
+#### Constants of system ####
+
+numMasses = matrixSize
+#egienValues are here
+#eigneVectors are here
+x_space = 1
+initalMassX_values = [0 for _ in range(numMasses)]
+
+for i in range(len(initalMassX_values)):
+    initalMassX_values[i] = (i-50) * x_space
+
+
+print(initalMassX_values)
+# Time parameters
+t0 = 0
+t_end = 1000
+num_frames = 10000
+t_values = np.linspace(t0, t_end, num_frames)
+dt = (t_end - t0) / num_frames
+
+# Create figure and axis
+fig, ax = plt.subplots()
+ax.set_xlim(-20, 20)
+ax.set_ylim(-0.5, 0.5)
+
+
 
