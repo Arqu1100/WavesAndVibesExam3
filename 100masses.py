@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.animation as Animation
 
 
 #matrix size constant
@@ -34,17 +35,17 @@ print("Eigen Vectors:", egVec)
 
 #### Constants of system ####
 
+omegaConstant = 1
 numMasses = matrixSize
 #egienValues are here
 #eigneVectors are here
 x_space = 1
 initalMassX_values = [0 for _ in range(numMasses)]
 
+#Sets up masses x points with a spacing of 1
 for i in range(len(initalMassX_values)):
     initalMassX_values[i] = (i-50) * x_space
 
-
-print(initalMassX_values)
 # Time parameters
 t0 = 0
 t_end = 1000
@@ -57,5 +58,37 @@ fig, ax = plt.subplots()
 ax.set_xlim(-20, 20)
 ax.set_ylim(-0.5, 0.5)
 
+#multiplying the egen vector by the omega
+funcOmegas = egVec * omegaConstant
+
+#
+normal_mode_amps = [0 for i in range(matrixSize)]
+normal_mode_amps[49] = 1
+print(normal_mode_amps)
+
+massArray = [0 for _ in range(numMasses)]
 
 
+for i in range(numMasses):
+    massArray[i] = ax.plot([], [], 'o', markersize=10)
+
+
+def update(frame):
+    t = frame * dt
+    for i in range(numMasses):
+        x = initalMassX_values[i]
+        for omega, mode, amplitude in zip(funcOmegas, egVec, normal_mode_amps):
+            x += amplitude*mode[i]*np.cos(omega*t) 
+    
+        massArray[i].set_data([x], [0])
+    return massArray
+
+# Create animation
+Animation(fig, update, frames=num_frames, blit=True)
+
+# Show plot
+plt.xlabel('Position')
+plt.ylabel('Height')
+plt.title('Masses Oscillation')
+plt.grid(True)
+plt.show()
