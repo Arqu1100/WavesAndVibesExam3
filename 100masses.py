@@ -1,7 +1,7 @@
 import numpy as np
+import math
 import matplotlib.pyplot as plt
-import matplotlib.animation as Animation
-
+from matplotlib.animation import FuncAnimation
 
 #matrix size constant
 matrixSize = 100
@@ -35,12 +35,15 @@ print("Eigen Vectors:", egVec)
 
 #### Constants of system ####
 
-omegaConstant = 1
+omegaConstant = 50
+
 numMasses = matrixSize
-#egienValues are here
-#eigneVectors are here
-x_space = 1
+
+#Spacing between objects
+x_space = 2
 initalMassX_values = [0 for _ in range(numMasses)]
+
+#### ####
 
 #Sets up masses x points with a spacing of 1
 for i in range(len(initalMassX_values)):
@@ -48,43 +51,52 @@ for i in range(len(initalMassX_values)):
 
 # Time parameters
 t0 = 0
-t_end = 1000
-num_frames = 10000
+t_end = 100000
+num_frames = 1000000
 t_values = np.linspace(t0, t_end, num_frames)
 dt = (t_end - t0) / num_frames
 
-# Create figure and axis
-fig, ax = plt.subplots()
-ax.set_xlim(-20, 20)
-ax.set_ylim(-0.5, 0.5)
 
 #multiplying the egen vector by the omega
-funcOmegas = egVec * omegaConstant
+funcOmegas = egVal * omegaConstant
 
-#
+#Initializes normal modes
 normal_mode_amps = [0 for i in range(matrixSize)]
-normal_mode_amps[49] = 1
-print(normal_mode_amps)
 
-massArray = [0 for _ in range(numMasses)]
+#still needs work to make it more user friendly to select normal modes
+normal_mode_amps[50] = 1
+normal_mode_amps[25] = 1
+normal_mode_amps[75] = 1
+normal_mode_amps[80] = 1
 
+massArray = []
 
+# Create figure and axis
+fig, ax = plt.subplots()
+ax.set_xlim(-110, 110)
+ax.set_ylim(-0.2, 0.2)
+
+#Creates a new array of 2D objects
 for i in range(numMasses):
-    massArray[i] = ax.plot([], [], 'o', markersize=10)
+    massMark, = ax.plot([], [], 'o', markersize=3)
+    massArray.append(massMark)
+    
 
 
 def update(frame):
+    
     t = frame * dt
     for i in range(numMasses):
         x = initalMassX_values[i]
         for omega, mode, amplitude in zip(funcOmegas, egVec, normal_mode_amps):
             x += amplitude*mode[i]*np.cos(omega*t) 
-    
-        massArray[i].set_data([x], [0])
+            
+        massArray[i].set_data([x],[0])
+        
     return massArray
 
 # Create animation
-Animation(fig, update, frames=num_frames, blit=True)
+Animation = FuncAnimation(fig, update, frames=num_frames, blit=True)
 
 # Show plot
 plt.xlabel('Position')
